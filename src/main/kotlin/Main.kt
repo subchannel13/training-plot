@@ -19,6 +19,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.data.CartesianChartMode
 import com.patrykandpatrick.vico.multiplatform.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -29,7 +30,7 @@ val data = listOf(13, 8, 7, 12, 0, 1, 15, 14, 0, 11, 6, 12, 0, 11, 12, 11, 13, 8
 @Preview
 fun App() {
     var text by remember { mutableStateOf("Click me!") }
-    var length by remember { mutableStateOf(1) }
+    var length by remember { mutableStateOf(data.size) }
     val coroutineScope = rememberCoroutineScope()
 
     MaterialTheme {
@@ -48,6 +49,7 @@ fun App() {
                         bottomAxis = HorizontalAxis.rememberBottom(),
                     ),
                 modelProducer = modelProducer,
+                scrollState = rememberVicoScrollState(false)
             )
             Button(onClick = {
                 text = "Running"
