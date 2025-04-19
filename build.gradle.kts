@@ -22,6 +22,11 @@ dependencies {
     // With compose.desktop.common you will also lose @Preview functionality
     implementation(compose.desktop.currentOs)
     implementation("com.patrykandpatrick.vico:multiplatform-desktop:2.1.2")
+    implementation("io.jenetics:jenetics:8.2.0")
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 compose.desktop {
