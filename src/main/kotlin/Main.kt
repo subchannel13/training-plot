@@ -50,8 +50,8 @@ fun App() {
                 coroutineScope.launch(Dispatchers.IO) {
                     val model = JExample()
                     data.clear()
-                    for (i in 2..10) {
-                        delay(300)
+                    for (i in 2..100) {
+                        //delay(300)
 
                         val result = model.nextFit()
                         data.add(result)
