@@ -15,6 +15,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCarte
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
 import hr.kravarscan.evolution.JExample
+import hr.kravarscan.evolution.sample1.Sample1Optimizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,9 +24,13 @@ import kotlinx.coroutines.launch
 @Preview
 fun App() {
     var text by remember { mutableStateOf("Click me!") }
+    var resultVisualisation by remember { mutableStateOf("Line1\nLine2") }
     var length by remember { mutableStateOf(0) }
-    val data = mutableListOf(0)
+    val data = mutableListOf(0.0)
     val coroutineScope = rememberCoroutineScope()
+
+    val model = Sample1Optimizer()
+    var bestFit = 0.0
 
     MaterialTheme {
         val modelProducer = remember { CartesianChartModelProducer() }
@@ -48,21 +53,22 @@ fun App() {
             Button(onClick = {
                 text = "Running"
                 coroutineScope.launch(Dispatchers.IO) {
-                    val model = JExample()
-                    data.clear()
-                    for (i in 2..100) {
-                        //delay(300)
-
-                        val result = model.nextFit()
-                        data.add(result)
-                        length = data.size
+                    for (i in 0..< 1000) {
+                        val result = model.next()
+                        val fit = model.eval(result)
+                        if (fit > bestFit) {
+                            bestFit = fit
+                            resultVisualisation = model.dump(result)
+                            data.add(bestFit)
+                        }
                     }
-
+                    length = data.size
                     text = "Click me!"
                 }
             }) {
                 Text(text)
             }
+            Text(resultVisualisation)
         }
     }
 }
