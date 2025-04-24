@@ -11,36 +11,11 @@ import io.jenetics.util.Factory
 class Sample1Optimizer {
     private val gtf: Factory<Genotype<DoubleGene?>?> =
         Genotype.of(
-            // Memory
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-
-            // Select action 1
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            // Select action 2
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            // Select action 3
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-
-            // Answer number
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-
-            // Action 1 state update
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            // Action 2 state update
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
-            DoubleChromosome.of(-1.0, 1.0),
+            // 2 memory inits
+            // 3 * 3 action select neurons
+            // 1 * 3 answer neurons
+            // 2 * 3 state update neurons
+            DoubleChromosome.of(-1.0, 1.0, 2 + 9 + 3 + 6),
         )
 
     private val engine: Engine<DoubleGene?, Double> = Engine
@@ -49,23 +24,22 @@ class Sample1Optimizer {
 
     private val trainingSamples = (-40..40).map { SimonSays(it / 40.0) }
 
-    private val resultStream = engine.stream()
-
     fun next() = engine.stream().limit(1).collect(EvolutionResult.toBestGenotype<DoubleGene?, Double>())
 
     fun nextFit() = eval(next())
 
     fun eval(gt: Genotype<DoubleGene?>): Double {
-        val memInit = arrayOf(gt[0].gene()!!.doubleValue(), gt[1].gene()!!.doubleValue())
+        val gene = gt[0]
+        val memInit = arrayOf(gene[0]!!.doubleValue(), gene[1]!!.doubleValue())
         val selectionNns = arrayOf(
-            arrayOf(gt[2].gene()!!.doubleValue(), gt[3].gene()!!.doubleValue(), gt[4].gene()!!.doubleValue()),
-            arrayOf(gt[5].gene()!!.doubleValue(), gt[6].gene()!!.doubleValue(), gt[7].gene()!!.doubleValue()),
-            arrayOf(gt[8].gene()!!.doubleValue(), gt[9].gene()!!.doubleValue(), gt[10].gene()!!.doubleValue())
+            arrayOf(gene[2]!!.doubleValue(), gene[3]!!.doubleValue(), gene[4]!!.doubleValue()),
+            arrayOf(gene[5]!!.doubleValue(), gene[6]!!.doubleValue(), gene[7]!!.doubleValue()),
+            arrayOf(gene[8]!!.doubleValue(), gene[9]!!.doubleValue(), gene[10]!!.doubleValue())
         )
-        val answerNn = arrayOf(gt[11].gene()!!.doubleValue(), gt[12].gene()!!.doubleValue(), gt[13].gene()!!.doubleValue())
+        val answerNn = arrayOf(gene[11]!!.doubleValue(), gene[12]!!.doubleValue(), gene[13]!!.doubleValue())
         val statUpNns = arrayOf(
-            arrayOf(gt[14].gene()!!.doubleValue(), gt[15].gene()!!.doubleValue(), gt[16].gene()!!.doubleValue()),
-            arrayOf(gt[17].gene()!!.doubleValue(), gt[18].gene()!!.doubleValue(), gt[19].gene()!!.doubleValue())
+            arrayOf(gene[14]!!.doubleValue(), gene[15]!!.doubleValue(), gene[16]!!.doubleValue()),
+            arrayOf(gene[17]!!.doubleValue(), gene[18]!!.doubleValue(), gene[19]!!.doubleValue())
         )
 
         val mem = memInit.copyOf()
@@ -107,16 +81,17 @@ class Sample1Optimizer {
     }
 
     fun dump(gt: Genotype<DoubleGene?>): String {
-        val memInit = arrayOf(gt[0].gene()!!.doubleValue(), gt[1].gene()!!.doubleValue())
+        val gene = gt[0]
+        val memInit = arrayOf(gene[0]!!.doubleValue(), gene[1]!!.doubleValue())
         val selectionNns = arrayOf(
-            arrayOf(gt[2].gene()!!.doubleValue(), gt[3].gene()!!.doubleValue(), gt[4].gene()!!.doubleValue()),
-            arrayOf(gt[5].gene()!!.doubleValue(), gt[6].gene()!!.doubleValue(), gt[7].gene()!!.doubleValue()),
-            arrayOf(gt[8].gene()!!.doubleValue(), gt[9].gene()!!.doubleValue(), gt[10].gene()!!.doubleValue())
+            arrayOf(gene[2]!!.doubleValue(), gene[3]!!.doubleValue(), gene[4]!!.doubleValue()),
+            arrayOf(gene[5]!!.doubleValue(), gene[6]!!.doubleValue(), gene[7]!!.doubleValue()),
+            arrayOf(gene[8]!!.doubleValue(), gene[9]!!.doubleValue(), gene[10]!!.doubleValue())
         )
-        val answerNn = arrayOf(gt[11].gene()!!.doubleValue(), gt[12].gene()!!.doubleValue(), gt[13].gene()!!.doubleValue())
+        val answerNn = arrayOf(gene[11]!!.doubleValue(), gene[12]!!.doubleValue(), gene[13]!!.doubleValue())
         val statUpNns = arrayOf(
-            arrayOf(gt[14].gene()!!.doubleValue(), gt[15].gene()!!.doubleValue(), gt[16].gene()!!.doubleValue()),
-            arrayOf(gt[17].gene()!!.doubleValue(), gt[18].gene()!!.doubleValue(), gt[19].gene()!!.doubleValue())
+            arrayOf(gene[14]!!.doubleValue(), gene[15]!!.doubleValue(), gene[16]!!.doubleValue()),
+            arrayOf(gene[17]!!.doubleValue(), gene[18]!!.doubleValue(), gene[19]!!.doubleValue())
         )
 
         return "Mem: ${memInit[0].format(2)}, ${memInit[1].format(2)}\n" +
