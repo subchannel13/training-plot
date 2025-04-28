@@ -1,9 +1,9 @@
 package hr.kravarscan.evolution.sample1
 
-import io.jenetics.BitGene
 import io.jenetics.DoubleChromosome
 import io.jenetics.DoubleGene
 import io.jenetics.Genotype
+import io.jenetics.Optimize
 import io.jenetics.engine.Engine
 import io.jenetics.engine.EvolutionResult
 import io.jenetics.util.Factory
@@ -20,6 +20,7 @@ class Sample1Optimizer {
 
     private val engine: Engine<DoubleGene?, Double> = Engine
         .builder(::eval, gtf)
+        .optimize(Optimize.MINIMUM)
         .build()
 
     private val trainingSamples = (-40..40).map { SimonSays(it / 40.0) }
@@ -77,7 +78,7 @@ class Sample1Optimizer {
             error += sample.error.coerceAtMost(1.0)
         }
 
-        return trainingSamples.size - error
+        return error
     }
 
     fun dump(gt: Genotype<DoubleGene?>): String {

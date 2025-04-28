@@ -32,7 +32,7 @@ fun App() {
 
     val data = mutableListOf(0.0)
     val model = Sample1Optimizer()
-    var bestFit = 0.0
+    var bestFit = Double.POSITIVE_INFINITY
 
     val coroutineScope = rememberCoroutineScope()
     val isRunning = MutableStateFlow(false)
@@ -77,7 +77,7 @@ fun App() {
                     while (isRunning.value) {
                         val result = model.next()
                         val fit = model.eval(result)
-                        if (fit > bestFit) {
+                        if (fit < bestFit) {
                             bestFit = fit
                             updates.send(SolutionInfo(
                                 model.dump(result),
@@ -92,7 +92,10 @@ fun App() {
     coroutineScope.launch {
         updates.consumeEach {
             resultVisualisation = it.description
-            data.add(it.fitness)
+            if (length > 0)
+                data.add(it.error)
+            else
+                data[0] = it.error
             length = data.size
         }
     }
