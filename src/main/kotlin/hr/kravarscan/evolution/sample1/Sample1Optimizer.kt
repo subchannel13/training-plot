@@ -1,5 +1,6 @@
 package hr.kravarscan.evolution.sample1
 
+import hr.kravarscan.evolution.format
 import io.jenetics.DoubleChromosome
 import io.jenetics.DoubleGene
 import io.jenetics.Genotype
@@ -102,9 +103,5 @@ class Sample1Optimizer {
                 "Answer: ${answerNn[0].format(2)}, ${answerNn[1].format(2)}, ${answerNn[2].format(2)}\n" +
                 "State Get: ${statUpNns[0][0].format(2)}, ${statUpNns[0][1].format(2)}, ${statUpNns[0][2].format(2)}\n" +
                 "State Set: ${statUpNns[1][0].format(2)}, ${statUpNns[1][1].format(2)}, ${statUpNns[1][2].format(2)}"
-    }
-
-    companion object {
-        fun Double.format(digits: Int) = "%.${digits}f".format(this)
     }
 }

@@ -1,9 +1,12 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import com.patrykandpatrick.vico.multiplatform.cartesian.CartesianChartHost
@@ -15,10 +18,12 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.layer.rememberLineCarte
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
 import hr.kravarscan.evolution.SolutionInfo
+import hr.kravarscan.evolution.format
 import hr.kravarscan.evolution.sample1.Sample1Optimizer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -27,12 +32,14 @@ import kotlinx.coroutines.launch
 @Preview
 fun App() {
     var text by remember { mutableStateOf("Click me!") }
-    var resultVisualisation by remember { mutableStateOf("Line1\nLine2") }
+    var resultVisualisation by remember { mutableStateOf("") }
+    var progressVisualisation by remember { mutableStateOf("") }
     var length by remember { mutableStateOf(0) }
 
     val data = mutableListOf(0.0)
     val model = Sample1Optimizer()
     var bestFit = Double.POSITIVE_INFINITY
+    var generations = 0
 
     val coroutineScope = rememberCoroutineScope()
     val isRunning = MutableStateFlow(false)
@@ -61,7 +68,10 @@ fun App() {
             }) {
                 Text(text)
             }
-            Text(resultVisualisation)
+            Row(horizontalArrangement = Arrangement.spacedBy(Dp(4f))) {
+                Text(progressVisualisation)
+                Text(resultVisualisation)
+            }
         }
     }
 
@@ -77,6 +87,7 @@ fun App() {
                     while (isRunning.value) {
                         val result = model.next()
                         val fit = model.eval(result)
+                        generations++
                         if (fit < bestFit) {
                             bestFit = fit
                             updates.send(SolutionInfo(
@@ -97,6 +108,13 @@ fun App() {
             else
                 data[0] = it.error
             length = data.size
+        }
+    }
+
+    coroutineScope.launch {
+        while (true) {
+            delay(50)
+            progressVisualisation = "Generation: $generations\nError: ${bestFit.format(3)}"
         }
     }
 }
