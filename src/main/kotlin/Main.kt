@@ -20,6 +20,7 @@ import com.patrykandpatrick.vico.multiplatform.cartesian.rememberVicoScrollState
 import hr.kravarscan.evolution.SolutionInfo
 import hr.kravarscan.evolution.format
 import hr.kravarscan.evolution.sample1.Sample1Optimizer
+import hr.kravarscan.evolution.sample1.Sample1OptimizerBinary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -37,7 +38,7 @@ fun App() {
     var length by remember { mutableStateOf(0) }
 
     val data = mutableListOf(0.0)
-    val model = Sample1Optimizer()
+    val model = Sample1OptimizerBinary()
     var bestFit = Double.POSITIVE_INFINITY
     var generations = 0
 
