@@ -114,8 +114,10 @@ fun App() {
 
     coroutineScope.launch {
         while (true) {
+            val lastGen = generations
             delay(50)
-            progressVisualisation = "Generation: $generations\nError: ${bestFit.format(3)}"
+            var rate = (generations - lastGen) / 0.05
+            progressVisualisation = "Generation: $generations\nRate: ${rate.format(1)} gens/s\n\nError: ${bestFit.format(3)}"
         }
     }
 }
